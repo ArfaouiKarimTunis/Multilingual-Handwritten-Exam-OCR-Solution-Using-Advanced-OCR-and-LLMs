@@ -54,7 +54,7 @@ function App() {
       <div className="app-container">
         <div className="header">
           <h1 className="title">✨ AI Vision Analyzer</h1>
-          <p className="subtitle">Powered by GPT-4o</p>
+      
         </div>
 
         <div className="content-section">
