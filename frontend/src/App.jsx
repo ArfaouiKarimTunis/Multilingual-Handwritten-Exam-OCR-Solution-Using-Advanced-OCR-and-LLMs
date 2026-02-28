@@ -58,7 +58,7 @@ function App() {
         </div>
 
         <div className="content-section">
-          {/* PANNEAU INPUT */}
+          
           <div className="input-panel">
             <div className="upload-area">
               <input type="file" id="fileInput" accept="image/*" onChange={handleFileChange} className="file-input" />
@@ -76,7 +76,7 @@ function App() {
             </div>
           </div>
 
-          {/* PANNEAU OUTPUT */}
+
           <div className="output-panel">
             <div className="response-box">
               {error && <p className="error-message">{error}</p>}
