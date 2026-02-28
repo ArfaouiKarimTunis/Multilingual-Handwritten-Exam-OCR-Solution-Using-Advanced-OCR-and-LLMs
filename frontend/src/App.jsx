@@ -5,26 +5,37 @@ import './App.css';
 
 function App() {
   const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [correctedImg, setCorrectedImg] = useState('');
   const [result, setResult] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
+      setCorrectedImg('');
+      setResult('');
+    }
+  };
+
   const handleUpload = async () => {
     if (!file) return;
-
     setIsLoading(true);
     setError('');
-    setResult('');
-
+    
     const formData = new FormData();
     formData.append('file', file);
 
     try {
       const response = await axios.post('http://localhost:5000/upload', formData);
-      setResult(response.data.message || response.data.result || 'Analysis complete');
-    } catch (error) {
-      setError('Failed to process image. Please try again.');
-      console.error(error);
+      setResult(response.data.result);
+      setCorrectedImg(response.data.corrected_image);
+    } catch (err) {
+      setError('Error processing image with OpenAI. Check your API key.');
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -32,95 +43,56 @@ function App() {
 
   const handleClear = () => {
     setFile(null);
+    setPreview(null);
     setResult('');
+    setCorrectedImg('');
     setError('');
   };
 
   return (
     <div className="app-wrapper">
-      <div className="background-elements">
-        <div className="gradient-orb orb-1"></div>
-        <div className="gradient-orb orb-2"></div>
-      </div>
-
       <div className="app-container">
         <div className="header">
-          <h1 className="title">✨ AI Image Analyzer</h1>
-          <p className="subtitle">Upload an image and let AI analyze it</p>
+          <h1 className="title">✨ AI Vision Analyzer</h1>
+          <p className="subtitle">Powered by GPT-4o</p>
         </div>
 
         <div className="content-section">
+          {/* PANNEAU INPUT */}
           <div className="input-panel">
-            <div className="panel-header">
-              <h2>📤 Upload Image</h2>
-            </div>
-            
             <div className="upload-area">
-              <input
-                type="file"
-                id="fileInput"
-                accept="image/*"
-                onChange={(e) => setFile(e.target.files[0])}
-                className="file-input"
-              />
+              <input type="file" id="fileInput" accept="image/*" onChange={handleFileChange} className="file-input" />
               <label htmlFor="fileInput" className="upload-label">
-                <div className="upload-icon">🖼️</div>
-                <p className="upload-title">Click to upload or drag image</p>
-                <p className="upload-subtitle">PNG, JPG, GIF up to 10MB</p>
+                {preview ? <img src={preview} alt="Original" className="mini-preview" /> : <div className="upload-icon">🖼️</div>}
+                <p>Click to change image</p>
               </label>
             </div>
 
-            {file && (
-              <div className="file-preview">
-                <p className="file-name">📁 {file.name}</p>
-                <p className="file-size">Size: {(file.size / 1024 / 1024).toFixed(2)} MB</p>
-              </div>
-            )}
-
             <div className="input-actions">
-              <button
-                onClick={handleUpload}
-                disabled={isLoading || !file}
-                className="btn btn-primary"
-              >
-                {isLoading ? (
-                  <>
-                    <span className="spinner"></span> Processing...
-                  </>
-                ) : (
-                  <> 🚀 Analyze Image</>
-                )}
+              <button onClick={handleUpload} disabled={isLoading || !file} className="btn btn-primary">
+                {isLoading ? "Analyzing..." : "🚀 Process & Analyze"}
               </button>
-              <button
-                onClick={handleClear}
-                disabled={isLoading}
-                className="btn btn-secondary"
-              >
-                Clear
-              </button>
+              <button onClick={handleClear} className="btn btn-secondary">Clear</button>
             </div>
           </div>
 
+          {/* PANNEAU OUTPUT */}
           <div className="output-panel">
-            <div className="panel-header">
-              <h2>📊 Response</h2>
-            </div>
             <div className="response-box">
-              {error ? (
-                <p className="error-message">{error}</p>
-              ) : result ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <p className="result-text">{result}</p>
+              {error && <p className="error-message">{error}</p>}
+              
+              {correctedImg && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="result-container">
+                  <h3>Enhanced Image:</h3>
+                  <img src={correctedImg} alt="Corrected" className="main-result-img" />
+                  <div className="analysis-text">
+                    <h4>AI Description:</h4>
+                    <p>{result}</p>
+                  </div>
                 </motion.div>
-              ) : (
-                <p className="placeholder-text">
-                  {isLoading ? '⏳ Processing your image...' : '👇 Upload an image to see results'}
-                </p>
               )}
+
+              {!correctedImg && !isLoading && <p className="placeholder-text">Waiting for image...</p>}
             </div>
           </div>
         </div>

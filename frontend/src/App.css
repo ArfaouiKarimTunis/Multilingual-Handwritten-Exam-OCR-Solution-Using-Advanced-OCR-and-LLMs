@@ -353,3 +353,11 @@
     transform: translateY(0);
   }
 }
+.app-wrapper {  color: white; min-height: 100vh; padding: 2rem; }
+.content-section { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.mini-preview { width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; }
+.main-result-img { width: 100%; border-radius: 12px; border: 2px solid #38bdf8; margin-bottom: 1rem; }
+.analysis-text { background: #1e293b; padding: 1rem; border-radius: 8px; line-height: 1.6; }
+.btn { padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; font-weight: bold; }
+.btn-primary { background: #38bdf8; color: #000; }
+.btn-secondary { background: #475569; color: white; margin-left: 10px; }
