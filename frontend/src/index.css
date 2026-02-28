@@ -1,0 +1,20 @@
+/* index.css */
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box; /* Empêche le padding de faire déborder les éléments */
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  background-color: #0f172a; /* Couleur de fond uniforme */
+  overflow-x: hidden; /* Empêche le défilement horizontal */
+}
